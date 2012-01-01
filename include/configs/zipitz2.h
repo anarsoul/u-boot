@@ -80,6 +80,12 @@
 #define	CONFIG_DOS_PARTITION
 #endif
 
+#define	CONFIG_EXTRA_ENV_SETTINGS					\
+	"stdout=lcd\0"							\
+	"stdin=pxa27x-mkp\0"						\
+	"stderr=lcd\0"							\
+	""
+#define	CONFIG_KEYBOARD
 /*
  * SPI and LCD
  */
@@ -175,15 +181,81 @@ unsigned char zipitz2_spi_read(void);
 #define CONFIG_SYS_FLASH_PROTECTION
 
 /*
+ * Matrix keypad
+ */
+#ifdef	CONFIG_KEYBOARD
+#define	CONFIG_PXA27X_MKP
+
+#define	CONFIG_PXA27X_MKP_MKP_COLS	7
+#define	CONFIG_PXA27X_MKP_MKP_ROWS	6
+
+#define	CONFIG_PXA27X_MKP_DEBOUNCE	30
+#define	CONFIG_PXA27X_MKP_DELAY		30000
+
+#define	CONFIG_PXA27X_MKP_MOD_SHIFT	{5, 3}
+#define	CONFIG_PXA27X_MKP_MOD_ALT	{5, 2}
+#define	CONFIG_PXA27X_MKP_MOD_CTRL	{5, 4}
+
+#define	CONFIG_PXA27X_MKP_KEYMAP		\
+	{ 1, 1, 'q', 'Q', '1', 0xff },		\
+	{ 2, 1, 'i', 'I', '8', 0xff },		\
+	{ 3, 1, 'g', 'G', '\"', 0xff },		\
+	{ 4, 1, 'x', 'X', '/', 0xff },		\
+	{ 5, 1, '\r', 0xff, 0xff, 0xff },	\
+	{ 6, 1, '-', 0xff, 0xff, 0xff },	\
+						\
+	{ 1, 2, 'w', 'W', '2', 0xff },		\
+	{ 2, 2, 'o', 'O', '9', 0xff },		\
+	{ 3, 2, 'h', 'H', '\'', 0xff },		\
+	{ 4, 2, 'c', 'C', '+', 0xff },		\
+						\
+	{ 1, 3, 'e', 'E', '3', 0xff },		\
+	{ 2, 3, 'p', 'P', '0', 0xff },		\
+	{ 3, 3, 'j', 'J', '[', 0xff },		\
+	{ 4, 3, 'v', 'V', '*', 0xff },		\
+						\
+	{ 0, 4, '\e', 0xff, '|', 0xff },	\
+	{ 1, 4, 'r', 'R', '4', 0xff },		\
+	{ 2, 4, 'a', 'A', '$', 0xff },		\
+	{ 3, 4, 'k', 'K', ']', 0xff },		\
+	{ 4, 4, 'b', 'B', '=', 0xff },		\
+						\
+	{ 0, 5, '\t', 0xff, 0xff, 0xff },	\
+	{ 1, 5, 't', 'T', '5', 0xff },		\
+	{ 2, 5, 's', 'S', '#', 0xff },		\
+	{ 3, 5, 'l', 'L', '-', 0xff },		\
+	{ 4, 5, 'n', 'N', '_', 0xff },		\
+	{ 5, 5, ' ', 0xff, 0xff, 0xff },	\
+						\
+	{ 1, 6, 'y', 'Y', '6', 0xff },		\
+	{ 2, 6, 'd', 'D', '&', 0xff },		\
+	{ 3, 6, '\b', '\b', '\\', 0xff },	\
+	{ 4, 6, 'm', 'M', '?', 0xff },		\
+	{ 5, 6, ',', '(', '<', '{' },		\
+						\
+	{ 1, 7, 'u', 'U', '7', 0xff },		\
+	{ 2, 7, 'f', 'F', '@', 0xff },		\
+	{ 3, 7, 'z', 'Z', '!', 0xff },		\
+	{ 4, 7, ';', '~', ':', 0xff },		\
+	{ 5, 7, '.', ')', '>', '}' },		\
+						\
+	{ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }
+
+#define	CONFIG_SYS_CONSOLE_ENV_OVERWRITE
+#define	CONFIG_SYS_CONSOLE_IS_IN_ENV
+
+#endif
+
+/*
  * GPIO settings
  */
 #define CONFIG_SYS_GAFR0_L_VAL	0x02000140
-#define CONFIG_SYS_GAFR0_U_VAL	0x59188000
-#define CONFIG_SYS_GAFR1_L_VAL	0x63900002
+#define CONFIG_SYS_GAFR0_U_VAL	0x59188005
+#define CONFIG_SYS_GAFR1_L_VAL	0x639420a2
 #define CONFIG_SYS_GAFR1_U_VAL	0xaaa03950
 #define CONFIG_SYS_GAFR2_L_VAL	0x0aaaaaaa
 #define CONFIG_SYS_GAFR2_U_VAL	0x29000308
-#define CONFIG_SYS_GAFR3_L_VAL	0x54000000
+#define CONFIG_SYS_GAFR3_L_VAL	0x56aa9500
 #define CONFIG_SYS_GAFR3_U_VAL	0x000000d5
 #define CONFIG_SYS_GPCR0_VAL	0x00000000
 #define CONFIG_SYS_GPCR1_VAL	0x00000020
@@ -191,7 +263,7 @@ unsigned char zipitz2_spi_read(void);
 #define CONFIG_SYS_GPCR3_VAL	0x00000000
 #define CONFIG_SYS_GPDR0_VAL	0xdafcee00
 #define CONFIG_SYS_GPDR1_VAL	0xffa3aaab
-#define CONFIG_SYS_GPDR2_VAL	0x8fe9ffff
+#define CONFIG_SYS_GPDR2_VAL	0x8fe1ffff
 #define CONFIG_SYS_GPDR3_VAL	0x001b1f8a
 #define CONFIG_SYS_GPSR0_VAL	0x06080400
 #define CONFIG_SYS_GPSR1_VAL	0x007f0000
@@ -203,7 +275,7 @@ unsigned char zipitz2_spi_read(void);
 /*
  * Clock settings
  */
-#define CONFIG_SYS_CKEN		0x00511220
+#define CONFIG_SYS_CKEN		0x00591220
 #define CONFIG_SYS_CCCR		0x00000190
 
 /*
