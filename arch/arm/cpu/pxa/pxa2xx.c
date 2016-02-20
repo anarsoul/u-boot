@@ -273,8 +273,8 @@ void pxa_wakeup(void)
 	/* Wakeup */
 	if (rcsr & RCSR_SMR) {
 		pspr = readl(PSPR);
+		writel(PSSR_PH, PSSR);
 		if (pspr) {
-			writel(PSSR_PH, PSSR);
 			writel(0, PSPR);
 			pxa2xx_dram_init();
 			icache_disable();
