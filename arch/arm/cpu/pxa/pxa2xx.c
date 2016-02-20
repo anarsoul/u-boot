@@ -271,19 +271,34 @@ void pxa_wakeup(void)
 		return;
 
 	/* Wakeup */
-	pspr = readl(PSPR);
-	if ((rcsr & RCSR_SMR) && pspr) {
-		writel(PSSR_PH, PSSR);
-		pxa2xx_dram_init();
-		icache_disable();
-		dcache_disable();
-		asm volatile("mov	pc, %0" : : "r"(pspr));
+	if (rcsr & RCSR_SMR) {
+		pspr = readl(PSPR);
+		if (pspr) {
+			writel(PSSR_PH, PSSR);
+			writel(0, PSPR);
+			pxa2xx_dram_init();
+			icache_disable();
+			dcache_disable();
+			asm volatile("mov	pc, %0" : : "r"(pspr));
+		} else {
+			/* Enable watchdog match to generate reset */
+			writel(OWER_WME, OWER);
+			/* Clear match status for watchdog: M3 */
+			writel(OSSR_M3, OSSR);
+			/* reset when OSMR3 and OSCR match ~ 100 ms */
+			writel(0x00008, OSCR);
+			writel(0x50000, OSMR3);
+			while (1) {
+				/* Do nothing */
+			}
+		}
 	}
 
 	writel(0, PSPR);
 	pfer = readl(PFER);
 	/* Disable wakeup on AC plug */
 	pfer &= ~(1 << 0);
+	writel(pfer, PFER);
 	i = 7;
 	asm volatile("mcr	p14, 0, %0, c7, c0, 0" : : "r"(i));
 	while (1) {
