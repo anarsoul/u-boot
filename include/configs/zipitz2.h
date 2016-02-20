@@ -25,9 +25,8 @@
 #define	CONFIG_ENV_OVERWRITE
 #define CONFIG_ENV_IS_IN_FLASH		1
 #define CONFIG_ENV_ADDR			0x40000
-#define CONFIG_ENV_SIZE			0x20000
+#define CONFIG_ENV_SIZE			0x10000
 
-/* we will never enable dcache, because we have to setup MMU first */
 #define CONFIG_SYS_DCACHE_OFF
 
 #define	CONFIG_SYS_MALLOC_LEN		(128*1024)
@@ -38,7 +37,7 @@
 	"then "								\
 		"source 0xa0000000; "					\
 	"else "								\
-		"bootm 0x60000; "					\
+		"bootm 0x50000; "					\
 	"fi; "
 #define	CONFIG_BOOTARGS							\
 	"console=tty0 console=ttyS2,115200 fbcon=rotate:3"
@@ -95,13 +94,6 @@
 #define	CONFIG_LCD_ROTATION
 #define	CONFIG_PXA_LCD
 #define	CONFIG_LMS283GF05
-#define	CONFIG_VIDEO_LOGO
-#define	CONFIG_CMD_BMP
-#define	CONFIG_SPLASH_SCREEN
-#define	CONFIG_SPLASH_SCREEN_ALIGN
-#define	CONFIG_VIDEO_BMP_GZIP
-#define	CONFIG_VIDEO_BMP_RLE8
-#define	CONFIG_SYS_VIDEO_LOGO_MAX_SIZE	(2 << 20)
 
 #define	SPI_DELAY	udelay(10)
 #define	SPI_SDA(val)	zipitz2_spi_sda(val)
