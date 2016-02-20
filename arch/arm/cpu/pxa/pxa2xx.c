@@ -238,6 +238,7 @@ void pxa_clock_setup(void)
 
 void pxa_wakeup(void)
 {
+#if 0
 	uint32_t rcsr;
 
 	rcsr = readl(RCSR);
@@ -251,6 +252,44 @@ void pxa_wakeup(void)
 		dcache_disable();
 		asm volatile("mov	pc, %0" : : "r"(readl(PSPR)));
 	}
+#else
+	/*
+	 *   Watchdog Reset: (Reset from linux)
+	 *      Continue to Normal boot
+	 *   Sleep-Exit Reset (Sleep, or Deep-Sleep from linux poweroff() / other boot):
+	 *      Check for non-zero in Scratch register, if so resume from Scratch register
+	 *      If not issue WatchDog reset
+	 *   All other reset types:
+	 *      Enter Deep-Sleep mode
+	 */
+	uint32_t rcsr, pspr, i, pfer;
+
+	rcsr = readl(RCSR);
+	writel(rcsr & (RCSR_GPR | RCSR_SMR | RCSR_WDR | RCSR_HWR), RCSR);
+
+	if (rcsr & RCSR_WDR)
+		return;
+
+	/* Wakeup */
+	pspr = readl(PSPR);
+	if ((rcsr & RCSR_SMR) && pspr) {
+		writel(PSSR_PH, PSSR);
+		pxa2xx_dram_init();
+		icache_disable();
+		dcache_disable();
+		asm volatile("mov	pc, %0" : : "r"(pspr));
+	}
+
+	writel(0, PSPR);
+	pfer = readl(PFER);
+	/* Disable wakeup on AC plug */
+	pfer &= ~(1 << 0);
+	i = 7;
+	asm volatile("mcr	p14, 0, %0, c7, c0, 0" : : "r"(i));
+	while (1) {
+		/* Do nothing */
+	}
+#endif
 }
 
 int arch_cpu_init(void)
