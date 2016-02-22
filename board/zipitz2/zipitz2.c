@@ -28,13 +28,8 @@ inline void lcd_start(void) {};
 /*
  * Miscelaneous platform dependent initialisations
  */
-
 int board_init (void)
 {
-	/* We have RAM, disable cache */
-	dcache_disable();
-	icache_disable();
-
 	/* arch number of Z2 */
 	gd->bd->bi_arch_number = MACH_TYPE_ZIPIT2;
 
