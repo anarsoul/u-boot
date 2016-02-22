@@ -302,6 +302,9 @@ ulong lcd_setmem(ulong addr)
 
 	/* Round up to nearest full page, or MMU section if defined */
 	size = ALIGN(size, CONFIG_LCD_ALIGNMENT);
+#ifdef CONFIG_LCD_EXTRA_MEM
+	size += CONFIG_LCD_EXTRA_MEM;
+#endif
 	addr = ALIGN(addr - CONFIG_LCD_ALIGNMENT + 1, CONFIG_LCD_ALIGNMENT);
 
 	/* Allocate pages for the frame buffer. */
